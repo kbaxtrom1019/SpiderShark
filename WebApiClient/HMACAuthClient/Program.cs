@@ -28,7 +28,8 @@ namespace HMACAuthClient
 
             HttpClient client = HttpClientFactory.Create(customDelegatingHandler);
 
-            var order = new LeaderboardEntry { UserName = "Trainer", Score = 1500};
+            var RandValue = new Random().Next();
+            var order = new LeaderboardEntry { UserName = "Trainer" + RandValue.ToString(), Score = RandValue };
 
             HttpResponseMessage response = await client.PostAsJsonAsync(apiBaseAddress + "api/leaderboard/upload", order);
             Console.WriteLine(response.RequestMessage.ToString());

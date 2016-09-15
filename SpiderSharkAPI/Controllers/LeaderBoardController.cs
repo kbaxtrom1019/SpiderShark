@@ -11,6 +11,15 @@ namespace SpiderSharkAPI.Controllers
 {
     public class LeaderboardController : ApiController
     {
+        static LeaderBoardRepository repository;
+        public LeaderboardController()
+        {
+            if(repository == null)
+            {
+                repository = new LeaderBoardRepository();
+            }
+
+        }
 
         [HttpPost]
         [HMACAuth]
@@ -19,7 +28,8 @@ namespace SpiderSharkAPI.Controllers
         {
             if (ModelState.IsValid)
             {
-                return Ok(entry);
+                bool success = repository.InsertLeaderBoardEntry(entry);
+                return Ok(success);                
             }
             else
             {
@@ -30,9 +40,7 @@ namespace SpiderSharkAPI.Controllers
         [HttpGet]
         public IHttpActionResult Status(int pageSize, int pageIndex)
         {
-            List<LeaderboardEntry> data = new List<LeaderboardEntry>();
-            data.Add(new LeaderboardEntry());
-            data.Add(new LeaderboardEntry());
+            List<LeaderboardEntry> data = repository.GetEntries();
             return Ok(data);
         }
     }
