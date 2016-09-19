@@ -14,6 +14,7 @@ using System.Web.Http;
 using System.Web.Http.Filters;
 using System.Web.Http.Results;
 
+
 namespace SpiderSharkAPI.Filters
 {
     public class HMACAuthAttribute : Attribute, IAuthenticationFilter
@@ -36,6 +37,7 @@ namespace SpiderSharkAPI.Filters
 
             if (req.Headers.Authorization != null && authenticationScheme.Equals(req.Headers.Authorization.Scheme, StringComparison.OrdinalIgnoreCase))
             {
+
                 var rawAuthzHeader = req.Headers.Authorization.Parameter;
 
                 var autherizationHeaderArray = GetAutherizationHeaderValues(rawAuthzHeader);
@@ -134,8 +136,8 @@ namespace SpiderSharkAPI.Filters
             {
                 byte[] signatureBytes = hmac.ComputeHash(signature);
 
-
                 return (incomingBase64Signature.Equals(Convert.ToBase64String(signatureBytes), StringComparison.Ordinal));
+
             }
 
         }

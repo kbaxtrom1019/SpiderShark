@@ -11,7 +11,7 @@ namespace SpiderSharkAPI.Controllers
 {
     public class LeaderboardController : ApiController
     {
-        static LeaderBoardRepository repository;
+        LeaderBoardRepository repository;
         public LeaderboardController()
         {
             if(repository == null)
@@ -23,12 +23,12 @@ namespace SpiderSharkAPI.Controllers
 
         [HttpPost]
         [HMACAuth]
-        [ActionName("Upload")]
+        [ActionName("upload")]
         public IHttpActionResult PostLeaderboardEntry(LeaderboardEntry entry)
         {
             if (ModelState.IsValid)
             {
-                bool success = repository.InsertLeaderBoardEntry(entry);
+                bool success = repository.UploadScore(entry);
                 return Ok(success);                
             }
             else
@@ -37,10 +37,29 @@ namespace SpiderSharkAPI.Controllers
             }
         }
 
+
+
         [HttpGet]
-        public IHttpActionResult Status(int pageSize, int pageIndex)
+        [ActionName("all_scores")]
+        public IHttpActionResult GetScores(string acccoundId)
         {
-            List<LeaderboardEntry> data = repository.GetEntries();
+            if(acccoundId != null && acccoundId.Length > 0)
+            {
+                List<LeaderboardEntry> data = repository.GetAllScores(acccoundId);
+                return Ok(data);
+            }
+            else
+            {
+                return BadRequest("Invalid accoundId:" + acccoundId.ToString());
+            }
+
+        }
+
+        [HttpGet]
+        [ActionName("top_10")]
+        public IHttpActionResult GetTopTen()
+        {
+            List<LeaderboardEntry> data = repository.GetTopTen();
             return Ok(data);
         }
     }

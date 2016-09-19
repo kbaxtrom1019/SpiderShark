@@ -29,9 +29,9 @@ namespace HMACAuthClient
             HttpClient client = HttpClientFactory.Create(customDelegatingHandler);
 
             var RandValue = new Random().Next();
-            var order = new LeaderboardEntry { UserName = "Trainer" + RandValue.ToString(), Score = RandValue };
+            var order = new LeaderboardEntry { AccountID = "03411023bb0c4e55ba8032ef5e2b7175", UserName = "Trainer" + RandValue.ToString(), Score = RandValue };
 
-            HttpResponseMessage response = await client.PostAsJsonAsync(apiBaseAddress + "api/leaderboard/upload", order);
+            HttpResponseMessage response = await client.GetAsync(apiBaseAddress + "api/leaderboard/scores?pageSize=0&pageIndex=0");
             Console.WriteLine(response.RequestMessage.ToString());
             if (response.IsSuccessStatusCode)
             {
@@ -44,7 +44,6 @@ namespace HMACAuthClient
                 Console.WriteLine("Failed to call the API. HTTP Status: {0}, Reason {1}", response.StatusCode, response.ReasonPhrase);
             }
 
-            Console.ReadLine();
         }
 
         public class CustomDelegatingHandler : DelegatingHandler

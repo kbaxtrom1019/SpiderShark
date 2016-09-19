@@ -8,6 +8,7 @@ namespace HMACAuthClient
 {
     public class LeaderboardEntry
     {
+        public string AccountID { get; set; }
         public string UserName { get; set; }
         public int Score { get; set; }
     }
