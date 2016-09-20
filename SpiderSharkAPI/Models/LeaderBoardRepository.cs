@@ -45,28 +45,12 @@ namespace SpiderSharkAPI.Models
             return false;
         }
 
-        //public List<LeaderboardEntry> GetAllScores(string accoundId)
-        //{
-        //    if(db != null)
-        //    {
-        //        List<LeaderboardEntry> items = new List<LeaderboardEntry>();
-        //        var result = db.SortedSetRangeByRank("leaderboard", order:Order.Descending);
-        //        foreach(RedisValue item in result)
-        //        {
-        //            items.Add(JsonConvert.DeserializeObject<LeaderboardEntry>(item.ToString()));
-        //        }
-        //        return items;
-        //    }
-            
-        //    return null;
-        //}
-
-        public List<LeaderboardEntry> GetTopTen()
+        public List<LeaderboardEntry> GetScores(int startIndex, int stopIndex)
         {
             if(db != null)
             {
                 List<LeaderboardEntry> items = new List<LeaderboardEntry>();
-                var result = db.SortedSetRangeByRank("leaderboard", order: Order.Descending, start:0, stop : 9);
+                var result = db.SortedSetRangeByRank("leaderboard", order: Order.Descending, start: startIndex, stop : stopIndex);
                 foreach (RedisValue item in result)
                 {
                     items.Add(JsonConvert.DeserializeObject<LeaderboardEntry>(item.ToString()));
