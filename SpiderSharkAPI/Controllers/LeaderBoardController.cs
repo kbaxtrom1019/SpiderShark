@@ -39,21 +39,21 @@ namespace SpiderSharkAPI.Controllers
 
 
 
-        [HttpGet]
-        [ActionName("all_scores")]
-        public IHttpActionResult GetScores(string acccoundId)
-        {
-            if(acccoundId != null && acccoundId.Length > 0)
-            {
-                List<LeaderboardEntry> data = repository.GetAllScores(acccoundId);
-                return Ok(data);
-            }
-            else
-            {
-                return BadRequest("Invalid accoundId:" + acccoundId.ToString());
-            }
+        //[HttpGet]
+        //[ActionName("all_scores")]
+        //public IHttpActionResult GetScores(string acccoundId)
+        //{
+        //    if(acccoundId != null && acccoundId.Length > 0)
+        //    {
+        //        List<LeaderboardEntry> data = repository.GetAllScores(acccoundId);
+        //        return Ok(data);
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("Invalid accoundId:" + acccoundId.ToString());
+        //    }
 
-        }
+        //}
 
         [HttpGet]
         [ActionName("top_10")]

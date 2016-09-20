@@ -31,7 +31,8 @@ namespace HMACAuthClient
             var RandValue = new Random().Next();
             var order = new LeaderboardEntry { AccountID = "03411023bb0c4e55ba8032ef5e2b7175", UserName = "Trainer" + RandValue.ToString(), Score = RandValue };
 
-            HttpResponseMessage response = await client.GetAsync(apiBaseAddress + "api/leaderboard/scores?pageSize=0&pageIndex=0");
+            HttpResponseMessage response = await client.GetAsync(apiBaseAddress + "api/leaderboard/top_10");
+            //HttpResponseMessage response = await client.PostAsJsonAsync(apiBaseAddress + "api/leaderboard/upload", order);
             Console.WriteLine(response.RequestMessage.ToString());
             if (response.IsSuccessStatusCode)
             {

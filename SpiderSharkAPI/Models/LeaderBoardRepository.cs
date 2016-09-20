@@ -2,66 +2,77 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using MongoDB.Driver.Core;
 using SpiderSharkAPI.Models;
+using Newtonsoft.Json;
+using StackExchange.Redis;
+using System.Threading.Tasks;
 
 namespace SpiderSharkAPI.Models
 {
     public class LeaderBoardRepository
     {
-        const string uri = "mongodb://root:sprinter0*@ds033106.mlab.com:33106/race_leaderboard_db";
+        private const string uri = "pub-redis-11176.us-east-1-2.5.ec2.garantiadata.com:11176";
+        private const string password = "sprinter0*";
+        private ConnectionMultiplexer redis;
+        private IDatabase db;
 
-        private MongoClient client;
-        private IMongoDatabase db;
         public LeaderBoardRepository()
         {
+            ConfigurationOptions config = new ConfigurationOptions
+            {
+                EndPoints = { uri },
+                Password = password
+            };
+
             try
             {
-                client = new MongoClient(uri);
-                db = client.GetDatabase("race_leaderboard_db");
+                redis = ConnectionMultiplexer.Connect(config);
+                db = redis.GetDatabase();
             }
-            catch (MongoConfigurationException configEx)
+            catch(Exception e)
             {
-                Console.Write(configEx.ToString());
+                Console.Write(e);
             }
-            catch
-            {
-
-            }
-
-
         }
 
         public bool UploadScore(LeaderboardEntry entry)
         {
             if(db != null)
             {
-                var collection = db.GetCollection<LeaderboardEntry>("scores");
-
-                collection.InsertOneAsync(entry);
-
-                return true;
+                var result = db.SortedSetAdd("leaderboard", JsonConvert.SerializeObject(entry), entry.Score);
+                return result;
             }
             return false;
         }
 
-        public  List<LeaderboardEntry> GetAllScores(string accoundId)
-        {
-            if(db != null)
-            {
-                var collection = db.GetCollection<LeaderboardEntry>("scores");
-                var filter = Builders<LeaderboardEntry>.Filter.Eq<string>("AccoundID", accoundId);
-                var results = collection.Find(filter);
-                return results.ToList();
-            }
+        //public List<LeaderboardEntry> GetAllScores(string accoundId)
+        //{
+        //    if(db != null)
+        //    {
+        //        List<LeaderboardEntry> items = new List<LeaderboardEntry>();
+        //        var result = db.SortedSetRangeByRank("leaderboard", order:Order.Descending);
+        //        foreach(RedisValue item in result)
+        //        {
+        //            items.Add(JsonConvert.DeserializeObject<LeaderboardEntry>(item.ToString()));
+        //        }
+        //        return items;
+        //    }
             
-            return null;
-        }
+        //    return null;
+        //}
 
         public List<LeaderboardEntry> GetTopTen()
         {
+            if(db != null)
+            {
+                List<LeaderboardEntry> items = new List<LeaderboardEntry>();
+                var result = db.SortedSetRangeByRank("leaderboard", order: Order.Descending, start:0, stop : 9);
+                foreach (RedisValue item in result)
+                {
+                    items.Add(JsonConvert.DeserializeObject<LeaderboardEntry>(item.ToString()));
+                }
+                return items;
+            }
 
             return null;
         }
