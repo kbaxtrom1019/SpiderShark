@@ -21,7 +21,7 @@ namespace SpiderSharkAPI.Controllers
         }
 
         [HttpPost]
-        [HMACAuth]
+        //[HMACAuth]
         [ActionName("upload")]
         public IHttpActionResult PostLeaderboardEntry(LeaderboardEntry entry)
         {
