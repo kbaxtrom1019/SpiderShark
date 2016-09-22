@@ -37,7 +37,6 @@ namespace SpiderSharkAPI.Filters
 
             if (req.Headers.Authorization != null && authenticationScheme.Equals(req.Headers.Authorization.Scheme, StringComparison.OrdinalIgnoreCase))
             {
-
                 var rawAuthzHeader = req.Headers.Authorization.Parameter;
 
                 var autherizationHeaderArray = GetAutherizationHeaderValues(rawAuthzHeader);
@@ -48,6 +47,12 @@ namespace SpiderSharkAPI.Filters
                     var incomingBase64Signature = autherizationHeaderArray[1];
                     var nonce = autherizationHeaderArray[2];
                     var requestTimeStamp = autherizationHeaderArray[3];
+
+
+                    Console.WriteLine("APPId:" + APPId);
+                    Console.WriteLine("Signature:" + incomingBase64Signature);
+                    Console.WriteLine("Nonce:" + nonce);
+                    Console.WriteLine("TimeStamp:" + requestTimeStamp);
 
                     var isValid = isValidRequest(req, APPId, incomingBase64Signature, nonce, requestTimeStamp);
 
