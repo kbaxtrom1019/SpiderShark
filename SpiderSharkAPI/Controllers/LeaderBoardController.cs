@@ -21,7 +21,7 @@ namespace SpiderSharkAPI.Controllers
         }
 
         [HttpPost]
-        //[HMACAuth]
+        [HMACAuth]
         [ActionName("upload")]
         public IHttpActionResult PostLeaderboardEntry(LeaderboardEntry entry)
         {
@@ -38,6 +38,7 @@ namespace SpiderSharkAPI.Controllers
 
 
         [HttpGet]
+        [HMACAuth]
         [ActionName("scores")]
         public IHttpActionResult GetScores(int startIndex, int endIndex)
         {
