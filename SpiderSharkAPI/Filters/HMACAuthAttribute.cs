@@ -35,37 +35,42 @@ namespace SpiderSharkAPI.Filters
         {
             var req = context.Request;
 
-            if (req.Headers.Authorization != null && authenticationScheme.Equals(req.Headers.Authorization.Scheme, StringComparison.OrdinalIgnoreCase))
+            var HasAuthValue = req.Headers.Contains("AuthData");
+            if (HasAuthValue)
             {
-                var rawAuthzHeader = req.Headers.Authorization.Parameter;
+                var rawAuthzHeader = req.Headers.GetValues("AuthData").First();
 
                 var autherizationHeaderArray = GetAutherizationHeaderValues(rawAuthzHeader);
 
                 if (autherizationHeaderArray != null)
                 {
-                    var APPId = autherizationHeaderArray[0];
-                    var incomingBase64Signature = autherizationHeaderArray[1];
-                    var nonce = autherizationHeaderArray[2];
-                    var requestTimeStamp = autherizationHeaderArray[3];
+                    var Skeme = autherizationHeaderArray[0];
+                    var APPId = autherizationHeaderArray[1];
+                    var incomingBase64Signature = autherizationHeaderArray[2];
+                    var nonce = autherizationHeaderArray[3];
+                    var requestTimeStamp = autherizationHeaderArray[4];
 
 
-                    Console.WriteLine("APPId:" + APPId);
-                    Console.WriteLine("Signature:" + incomingBase64Signature);
-                    Console.WriteLine("Nonce:" + nonce);
-                    Console.WriteLine("TimeStamp:" + requestTimeStamp);
-
-                    var isValid = isValidRequest(req, APPId, incomingBase64Signature, nonce, requestTimeStamp);
-
-                    if (isValid.Result)
+                    if (authenticationScheme.Equals(Skeme, StringComparison.OrdinalIgnoreCase))
                     {
-                        var currentPrincipal = new GenericPrincipal(new GenericIdentity(APPId), null);
-                        context.Principal = currentPrincipal;
+                        var isValid = isValidRequest(req, APPId, incomingBase64Signature, nonce, requestTimeStamp);
+
+                        if (isValid.Result)
+                        {
+                            var currentPrincipal = new GenericPrincipal(new GenericIdentity(APPId), null);
+                            context.Principal = currentPrincipal;
+                        }
+                        else
+                        {
+                            context.ErrorResult = new UnauthorizedResult(new AuthenticationHeaderValue[0], context.Request);
+                        }
                     }
                     else
                     {
                         context.ErrorResult = new UnauthorizedResult(new AuthenticationHeaderValue[0], context.Request);
                     }
                 }
+
                 else
                 {
                     context.ErrorResult = new UnauthorizedResult(new AuthenticationHeaderValue[0], context.Request);
@@ -95,7 +100,7 @@ namespace SpiderSharkAPI.Filters
 
             var credArray = rawAuthzHeader.Split(':');
 
-            if (credArray.Length == 4)
+            if (credArray.Length == 5)
             {
                 return credArray;
             }
